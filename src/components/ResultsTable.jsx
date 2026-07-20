@@ -1,20 +1,13 @@
 import { useMemo, useState } from 'react'
 import { DownloadIcon } from './icons'
-import { formatCNPJDigits, formatDateBR, isSituacaoAtiva } from '../lib/format'
+import { formatCNPJDigits, formatDateBR } from '../lib/format'
 
 const PAGE_SIZE = 25
 
 function toCsv(rows) {
-  const header = ['CNPJ', 'Razão Social', 'Nome Fantasia', 'Situação', 'Município', 'Data de Abertura']
+  const header = ['CNPJ', 'Razão Social', 'Nome Fantasia', 'Município', 'Data de Abertura']
   const lines = rows.map((row) =>
-    [
-      formatCNPJDigits(row.cnpj),
-      row.razao_social,
-      row.nome_fantasia || '',
-      row.situacao || '',
-      row.municipio || '',
-      formatDateBR(row.data_abertura),
-    ]
+    [formatCNPJDigits(row.c), row.r, row.n || '', row.m || '', formatDateBR(row.d)]
       .map((value) => `"${String(value ?? '').replace(/"/g, '""')}"`)
       .join(';')
   )
@@ -46,7 +39,8 @@ export default function ResultsTable({ results }) {
       <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-slate-100">
         <p className="text-sm text-slate-500">
           <span className="font-medium text-slate-800">{results.length}</span> empresa
-          {results.length === 1 ? '' : 's'} encontrada{results.length === 1 ? '' : 's'}
+          {results.length === 1 ? '' : 's'} ativa{results.length === 1 ? '' : 's'} encontrada
+          {results.length === 1 ? '' : 's'}
         </p>
         <button
           type="button"
@@ -65,42 +59,24 @@ export default function ResultsTable({ results }) {
             <tr className="text-left text-xs uppercase tracking-wide text-slate-400 border-b border-slate-100">
               <th className="px-6 py-3 font-medium">CNPJ</th>
               <th className="px-6 py-3 font-medium">Razão social</th>
-              <th className="px-6 py-3 font-medium">Situação</th>
               <th className="px-6 py-3 font-medium">Município</th>
               <th className="px-6 py-3 font-medium">Abertura</th>
             </tr>
           </thead>
           <tbody>
-            {pageItems.map((row) => {
-              const ativa = isSituacaoAtiva(row.situacao)
-              return (
-                <tr key={row.cnpj} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/60">
-                  <td className="px-6 py-3 font-mono text-slate-600 whitespace-nowrap">
-                    {formatCNPJDigits(row.cnpj)}
-                  </td>
-                  <td className="px-6 py-3">
-                    <p className="text-slate-800">{row.razao_social}</p>
-                    {row.nome_fantasia && <p className="text-xs text-slate-400">{row.nome_fantasia}</p>}
-                  </td>
-                  <td className="px-6 py-3 whitespace-nowrap">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
-                        ativa
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                          : 'bg-red-50 text-red-700 border-red-200'
-                      }`}
-                    >
-                      <span className={`w-1.5 h-1.5 rounded-full ${ativa ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                      {row.situacao || '—'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3 text-slate-600 whitespace-nowrap">{row.municipio || '—'}</td>
-                  <td className="px-6 py-3 text-slate-600 whitespace-nowrap">
-                    {formatDateBR(row.data_abertura)}
-                  </td>
-                </tr>
-              )
-            })}
+            {pageItems.map((row) => (
+              <tr key={row.c} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/60">
+                <td className="px-6 py-3 font-mono text-slate-600 whitespace-nowrap">
+                  {formatCNPJDigits(row.c)}
+                </td>
+                <td className="px-6 py-3">
+                  <p className="text-slate-800">{row.r}</p>
+                  {row.n && <p className="text-xs text-slate-400">{row.n}</p>}
+                </td>
+                <td className="px-6 py-3 text-slate-600 whitespace-nowrap">{row.m || '—'}</td>
+                <td className="px-6 py-3 text-slate-600 whitespace-nowrap">{formatDateBR(row.d)}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

@@ -14,7 +14,3 @@ export function formatDateBR(dateStr) {
   if (!year || !month || !day) return dateStr
   return `${day}/${month}/${year}`
 }
-
-export function isSituacaoAtiva(situacao) {
-  return (situacao || '').trim().toUpperCase() === 'ATIVA'
-}

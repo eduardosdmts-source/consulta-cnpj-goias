@@ -47,13 +47,11 @@ function App() {
       const merged = new Map()
       for (const list of responses) {
         for (const empresa of list) {
-          merged.set(empresa.cnpj, empresa)
+          merged.set(empresa.c, empresa)
         }
       }
 
-      const combined = [...merged.values()].sort((a, b) =>
-        a.razao_social.localeCompare(b.razao_social, 'pt-BR')
-      )
+      const combined = [...merged.values()].sort((a, b) => a.r.localeCompare(b.r, 'pt-BR'))
 
       setResults(combined)
     } catch {
@@ -72,7 +70,7 @@ function App() {
             Busca CNPJ Goiás por CNAE
           </h1>
           <p className="mt-2 text-slate-500">
-            Encontre empresas do Estado de Goiás filtrando por atividade econômica (CNAE)
+            Encontre empresas ativas do Estado de Goiás filtrando por atividade econômica (CNAE)
           </p>
         </header>
 
