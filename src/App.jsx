@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import CnaeSelector from './components/CnaeSelector'
+import CitySelector from './components/CitySelector'
 import EmptyState from './components/EmptyState'
 import ErrorMessage from './components/ErrorMessage'
 import SkeletonTable from './components/SkeletonTable'
@@ -10,7 +11,9 @@ const DATA_BASE = `${import.meta.env.BASE_URL}data`
 function App() {
   const [cnaeList, setCnaeList] = useState([])
   const [cnaeListError, setCnaeListError] = useState(null)
+  const [cityList, setCityList] = useState([])
   const [selected, setSelected] = useState([])
+  const [cityFilter, setCityFilter] = useState(null)
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -23,6 +26,14 @@ function App() {
       })
       .then(setCnaeList)
       .catch(() => setCnaeListError('Não foi possível carregar a lista de CNAEs. Atualize a página.'))
+
+    fetch(`${DATA_BASE}/municipios-go.json`)
+      .then((response) => {
+        if (!response.ok) throw new Error('status ' + response.status)
+        return response.json()
+      })
+      .then(setCityList)
+      .catch(() => {})
   }, [])
 
   async function handleSearch() {
@@ -51,7 +62,11 @@ function App() {
         }
       }
 
-      const combined = [...merged.values()].sort((a, b) => a.r.localeCompare(b.r, 'pt-BR'))
+      let combined = [...merged.values()]
+      if (cityFilter) {
+        combined = combined.filter((empresa) => empresa.m === cityFilter)
+      }
+      combined.sort((a, b) => a.r.localeCompare(b.r, 'pt-BR'))
 
       setResults(combined)
     } catch {
@@ -70,12 +85,14 @@ function App() {
             Busca CNPJ Goiás por CNAE
           </h1>
           <p className="mt-2 text-slate-500">
-            Encontre empresas ativas do Estado de Goiás filtrando por atividade econômica (CNAE)
+            Encontre empresas ativas do Estado de Goiás filtrando por uma ou mais atividades
+            econômicas (CNAE) e, se quiser, por cidade
           </p>
         </header>
 
         <div className="flex flex-col gap-3">
           <CnaeSelector cnaeList={cnaeList} selected={selected} onChange={setSelected} />
+          <CitySelector cityList={cityList} selected={cityFilter} onChange={setCityFilter} />
 
           <div className="flex justify-center">
             <button
