@@ -5,6 +5,7 @@ import EmptyState from './components/EmptyState'
 import ErrorMessage from './components/ErrorMessage'
 import SkeletonTable from './components/SkeletonTable'
 import ResultsTable from './components/ResultsTable'
+import siteConfig from '../site.config.mjs'
 
 const DATA_BASE = `${import.meta.env.BASE_URL}data`
 
@@ -81,13 +82,8 @@ function App() {
     <div className="min-h-screen px-4 py-10 sm:py-16">
       <div className="max-w-5xl mx-auto flex flex-col gap-8">
         <header className="text-center">
-          <h1 className="text-3xl sm:text-4xl font-semibold text-slate-900">
-            Busca CNPJ Goiás por CNAE
-          </h1>
-          <p className="mt-2 text-slate-500">
-            Encontre empresas ativas do Estado de Goiás filtrando por uma ou mais atividades
-            econômicas (CNAE) e, se quiser, por cidade
-          </p>
+          <h1 className="text-3xl sm:text-4xl font-semibold text-slate-900">{siteConfig.siteName}</h1>
+          <p className="mt-2 text-slate-500">{siteConfig.subtitle}</p>
         </header>
 
         <div className="flex flex-col gap-3">

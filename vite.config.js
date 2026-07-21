@@ -1,12 +1,22 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import siteConfig from './site.config.mjs'
+
+function injectSiteTitle() {
+  return {
+    name: 'inject-site-title',
+    transformIndexHtml(html) {
+      return html.replace(/<title>.*?<\/title>/, `<title>${siteConfig.siteName}</title>`)
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/consulta-cnpj-goias/restrito/',
+  base: siteConfig.basePath,
   build: {
-    outDir: 'dist/restrito',
+    outDir: siteConfig.outDir,
   },
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), injectSiteTitle()],
 })

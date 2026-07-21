@@ -1,7 +1,5 @@
 import { useState } from 'react'
-
-const PASSWORD_HASH = 'b606615351502ed496863d987340e31fab70b0813d982162dcd8c997d7a83b65'
-const STORAGE_KEY = 'consulta-cnpj-goias-restrito-auth'
+import siteConfig from '../../site.config.mjs'
 
 async function sha256(text) {
   const bytes = new TextEncoder().encode(text)
@@ -11,7 +9,7 @@ async function sha256(text) {
 
 export default function PasswordGate({ children }) {
   const [authenticated, setAuthenticated] = useState(
-    () => localStorage.getItem(STORAGE_KEY) === 'true'
+    () => localStorage.getItem(siteConfig.storageKey) === 'true'
   )
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -23,8 +21,8 @@ export default function PasswordGate({ children }) {
     setError(null)
 
     const hash = await sha256(password)
-    if (hash === PASSWORD_HASH) {
-      localStorage.setItem(STORAGE_KEY, 'true')
+    if (hash === siteConfig.passwordHash) {
+      localStorage.setItem(siteConfig.storageKey, 'true')
       setAuthenticated(true)
     } else {
       setError('Senha incorreta. Confira com quem compartilhou o acesso com você.')
@@ -33,7 +31,7 @@ export default function PasswordGate({ children }) {
   }
 
   function handleLogout() {
-    localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(siteConfig.storageKey)
     setAuthenticated(false)
     setPassword('')
   }
