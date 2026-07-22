@@ -4,7 +4,7 @@
 export default {
   siteName: 'Busca CNPJ Goiás por CNAE',
   subtitle:
-    'Encontre empresas ativas do Estado de Goiás filtrando por uma ou mais atividades econômicas (CNAE) e, se quiser, por cidade',
+    'Encontre empresas ativas do Estado de Goiás (exceto MEI) filtrando por uma ou mais atividades econômicas (CNAE) e, se quiser, por cidade',
 
   // Caminho público do GitHub Pages (deve bater com o nome do repositório).
   basePath: '/consulta-cnpj-goias/restrito/',
