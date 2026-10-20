@@ -9,7 +9,7 @@
 //            https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/
 //            (Empresas*.zip, Estabelecimentos*.zip, Simples.zip, Municipios.zip e
 //            Cnaes.zip; também aceita os CSVs já extraídos)
-// --ufs      UFs a gerar (padrão: todas). Rodar em lotes reduz o uso de memória;
+// --ufs      UFs a gerar (padrão: todas de src/lib/ufs.js). Rodar em lotes reduz o uso de memória;
 //            cada UF é gravada na própria pasta, então lotes não se sobrescrevem.
 // --atividades  "todas" (principal + secundárias, padrão) ou "principal".
 import { createReadStream, mkdirSync, appendFileSync, readdirSync, rmSync } from 'node:fs'
@@ -43,7 +43,7 @@ if (!['todas', 'principal'].includes(args.atividades)) {
 const ufs = args.ufs ? args.ufs.toUpperCase().split(',').map((uf) => uf.trim()) : UF_SIGLAS
 const invalid = ufs.filter((uf) => !UF_SIGLAS.includes(uf))
 if (invalid.length > 0) {
-  console.error('UF inválida:', invalid.join(', '))
+  console.error('UF fora da lista atendida (src/lib/ufs.js):', invalid.join(', '))
   process.exit(1)
 }
 const ufSet = new Set(ufs)

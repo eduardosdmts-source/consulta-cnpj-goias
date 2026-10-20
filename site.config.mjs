@@ -4,7 +4,7 @@
 export default {
   siteName: 'Busca CNPJ por CNAE',
   subtitle:
-    'Encontre empresas ativas no Brasil (exceto MEI) filtrando por estado, por uma ou mais atividades econômicas (CNAE) e, se quiser, por cidade',
+    'Encontre empresas ativas (exceto MEI) filtrando por estado, por uma ou mais atividades econômicas (CNAE) e, se quiser, por cidade',
 
   // Caminho público do GitHub Pages (deve bater com o nome do repositório).
   basePath: '/consulta-cnpj-goias/restrito/',

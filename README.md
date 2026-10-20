@@ -1,7 +1,9 @@
 # Busca CNPJ por CNAE
 
-App React + Vite + Tailwind que lista empresas ativas do Brasil (exceto MEI) por
-estado, uma ou mais atividades (CNAE) e, opcionalmente, cidade. Os dados vêm dos
+App React + Vite + Tailwind que lista empresas ativas (exceto MEI) por estado,
+uma ou mais atividades (CNAE) e, opcionalmente, cidade. Atende 22 UFs (todas
+menos ES, PR, RJ, RS e SC, deixadas de fora pelo limite de tamanho do GitHub
+Pages); a lista fica em `src/lib/ufs.js`. Os dados vêm dos
 [Dados Abertos do CNPJ](https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/)
 da Receita Federal e são publicados como arquivos estáticos no GitHub Pages.
 
@@ -29,25 +31,26 @@ caiu de 285 MB para 59 MB.
 2. Rode:
 
    ```sh
-   npm run dados -- --entrada receita            # todas as UFs
+   npm run dados -- --entrada receita            # todas as UFs atendidas
    npm run dados -- --entrada receita --ufs GO,DF # só algumas
    ```
 
    Opções: `--saida DIR` (padrão `public/data`), `--atividades principal` para
    indexar só o CNAE principal, `--temp DIR` para os arquivos intermediários
-   (~1,5 GB para o Brasil todo).
+   (~1 GB com todas as UFs).
 
-   O script usa até ~8 GB de memória para o Brasil todo. Com menos memória,
-   rode em lotes de UFs (`--ufs SP`, depois `--ufs MG,RJ,ES`...); cada UF é
+   O script usa até ~6 GB de memória com todas as UFs. Com menos memória,
+   rode em lotes de UFs (`--ufs SP`, depois `--ufs MG,BA,GO`...); cada UF é
    gravada na própria pasta, então um lote não apaga o outro.
 
 No fim ele mostra o tamanho de cada UF e avisa se passar de 1 GB.
 
 ### Dividir os dados entre sites do Pages
 
-Com as atividades secundárias, o Brasil inteiro fica perto de 2 GB, acima do
-limite de um site. Para dividir, gere as UFs grandes em outra pasta e publique em
-outro repositório com Pages ativo:
+Com as atividades secundárias, as 22 UFs ficam perto de 1,2 GB (estimativa a
+partir de Goiás), acima do limite de um site; só São Paulo deve ocupar
+~0,55 GB. Para dividir, gere as UFs grandes em outra pasta e publique em outro
+repositório com Pages ativo:
 
 ```sh
 npm run dados -- --entrada receita --ufs SP --saida ../dados-sp
