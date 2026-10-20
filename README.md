@@ -1,9 +1,9 @@
 # Busca CNPJ por CNAE
 
 App React + Vite + Tailwind que lista empresas ativas (exceto MEI) por estado,
-uma ou mais atividades (CNAE) e, opcionalmente, cidade. Atende 22 UFs (todas
-menos ES, PR, RJ, RS e SC, deixadas de fora pelo limite de tamanho do GitHub
-Pages); a lista fica em `src/lib/ufs.js`. Os dados vêm dos
+uma ou mais atividades (CNAE) e, opcionalmente, cidade. Atende 20 UFs (todas
+menos ES, MG, PR, RJ, RS, SC e SP, deixadas de fora pelo limite de 1 GB do
+GitHub Pages); a lista fica em `src/lib/ufs.js`. Os dados vêm dos
 [Dados Abertos do CNPJ](https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/)
 da Receita Federal e são publicados como arquivos estáticos no GitHub Pages.
 
@@ -37,19 +37,19 @@ caiu de 285 MB para 59 MB.
 
    Opções: `--saida DIR` (padrão `public/data`), `--atividades principal` para
    indexar só o CNAE principal, `--temp DIR` para os arquivos intermediários
-   (~1 GB com todas as UFs).
+   (~0,5 GB com todas as UFs).
 
-   O script usa até ~6 GB de memória com todas as UFs. Com menos memória,
-   rode em lotes de UFs (`--ufs SP`, depois `--ufs MG,BA,GO`...); cada UF é
+   O script usa até ~4 GB de memória com todas as UFs. Com menos memória,
+   rode em lotes de UFs (`--ufs BA,CE`, depois `--ufs GO,DF`...); cada UF é
    gravada na própria pasta, então um lote não apaga o outro.
 
 No fim ele mostra o tamanho de cada UF e avisa se passar de 1 GB.
 
 ### Dividir os dados entre sites do Pages
 
-Com as atividades secundárias, as 22 UFs ficam perto de 1,2 GB (estimativa a
-partir de Goiás), acima do limite de um site; só São Paulo deve ocupar
-~0,55 GB. Para dividir, gere as UFs grandes em outra pasta e publique em outro
+Com as atividades secundárias, as 20 UFs atendidas ficam perto de 0,5 GB
+(estimativa a partir de Goiás) e cabem no site atual. Se um dia entrar uma UF
+grande (ex: SP, ~0,55 GB sozinha), gere-a em outra pasta e publique em outro
 repositório com Pages ativo:
 
 ```sh

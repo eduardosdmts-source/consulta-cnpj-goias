@@ -1,6 +1,6 @@
 // UFs atendidas pela busca, na ordem alfabética do nome. Compartilhado entre
-// o app (seletor de UF) e os scripts de geração de dados. ES, PR, RJ, RS e SC
-// ficaram de fora para o volume de dados caber no GitHub Pages.
+// o app (seletor de UF) e os scripts de geração de dados. ES, MG, PR, RJ, RS,
+// SC e SP ficaram de fora para o volume de dados caber no GitHub Pages.
 export const UFS = [
   { sigla: 'AC', nome: 'Acre' },
   { sigla: 'AL', nome: 'Alagoas' },
@@ -13,7 +13,6 @@ export const UFS = [
   { sigla: 'MA', nome: 'Maranhão' },
   { sigla: 'MT', nome: 'Mato Grosso' },
   { sigla: 'MS', nome: 'Mato Grosso do Sul' },
-  { sigla: 'MG', nome: 'Minas Gerais' },
   { sigla: 'PA', nome: 'Pará' },
   { sigla: 'PB', nome: 'Paraíba' },
   { sigla: 'PE', nome: 'Pernambuco' },
@@ -21,7 +20,6 @@ export const UFS = [
   { sigla: 'RN', nome: 'Rio Grande do Norte' },
   { sigla: 'RO', nome: 'Rondônia' },
   { sigla: 'RR', nome: 'Roraima' },
-  { sigla: 'SP', nome: 'São Paulo' },
   { sigla: 'SE', nome: 'Sergipe' },
   { sigla: 'TO', nome: 'Tocantins' },
 ]
