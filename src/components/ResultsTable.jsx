@@ -4,28 +4,28 @@ import { formatCNPJDigits, formatDateBR } from '../lib/format'
 
 const PAGE_SIZE = 25
 
-function toCsv(rows) {
-  const header = ['CNPJ', 'Razão Social', 'Nome Fantasia', 'Município', 'Data de Abertura']
+function toCsv(rows, uf) {
+  const header = ['CNPJ', 'Razão Social', 'Nome Fantasia', 'Município', 'UF', 'Data de Abertura']
   const lines = rows.map((row) =>
-    [formatCNPJDigits(row.c), row.r, row.n || '', row.m || '', formatDateBR(row.d)]
+    [formatCNPJDigits(row.c), row.r, row.n || '', row.m || '', uf, formatDateBR(row.d)]
       .map((value) => `"${String(value ?? '').replace(/"/g, '""')}"`)
       .join(';')
   )
   return [header.join(';'), ...lines].join('\n')
 }
 
-function downloadCsv(rows) {
-  const csv = '﻿' + toCsv(rows)
+function downloadCsv(rows, uf) {
+  const csv = '﻿' + toCsv(rows, uf)
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `empresas-goias-${Date.now()}.csv`
+  link.download = `empresas-${uf.toLowerCase()}-${Date.now()}.csv`
   link.click()
   URL.revokeObjectURL(url)
 }
 
-export default function ResultsTable({ results }) {
+export default function ResultsTable({ results, uf }) {
   const [page, setPage] = useState(0)
 
   const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE))
@@ -44,7 +44,7 @@ export default function ResultsTable({ results }) {
         </p>
         <button
           type="button"
-          onClick={() => downloadCsv(results)}
+          onClick={() => downloadCsv(results, uf)}
           disabled={results.length === 0}
           className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition"
         >

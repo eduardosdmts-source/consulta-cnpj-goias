@@ -1,16 +1,84 @@
-# React + Vite
+# Busca CNPJ por CNAE
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+App React + Vite + Tailwind que lista empresas ativas do Brasil (exceto MEI) por
+estado, uma ou mais atividades (CNAE) e, opcionalmente, cidade. Os dados vêm dos
+[Dados Abertos do CNPJ](https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/)
+da Receita Federal e são publicados como arquivos estáticos no GitHub Pages.
 
-Currently, two official plugins are available:
+## Formato dos dados
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Gerados em `public/data/` (fora do git, publicados só no branch `gh-pages`):
 
-## React Compiler
+```
+<UF>/cnaes.json               [{ codigo, descricao, total }]
+<UF>/municipios.json          ["ABADIA DE GOIAS", ...]
+<UF>/cnae/<codigo>.json.gz    gzip de [[cnpj, razao, fantasia, idxMunicipio, data], ...]
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Cada estabelecimento aparece no arquivo de cada CNAE que tem (principal e
+secundárias); o app junta os CNAEs escolhidos, remove repetidos pelo CNPJ e
+ordena pela razão social. Os arquivos ficam gravados já em gzip porque o limite
+de 1 GB de um site do GitHub Pages conta o tamanho armazenado. Com isso Goiás
+caiu de 285 MB para 59 MB.
 
-## Expanding the Oxlint configuration
+## Gerar os dados
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+1. Baixe para uma pasta (ex: `receita/`) os arquivos do mês mais recente:
+   `Empresas*.zip`, `Estabelecimentos*.zip`, `Simples.zip`, `Municipios.zip` e
+   `Cnaes.zip` (cerca de 6 GB).
+2. Rode:
+
+   ```sh
+   npm run dados -- --entrada receita            # todas as UFs
+   npm run dados -- --entrada receita --ufs GO,DF # só algumas
+   ```
+
+   Opções: `--saida DIR` (padrão `public/data`), `--atividades principal` para
+   indexar só o CNAE principal, `--temp DIR` para os arquivos intermediários
+   (~1,5 GB para o Brasil todo).
+
+   O script usa até ~8 GB de memória para o Brasil todo. Com menos memória,
+   rode em lotes de UFs (`--ufs SP`, depois `--ufs MG,RJ,ES`...); cada UF é
+   gravada na própria pasta, então um lote não apaga o outro.
+
+No fim ele mostra o tamanho de cada UF e avisa se passar de 1 GB.
+
+### Dividir os dados entre sites do Pages
+
+Com as atividades secundárias, o Brasil inteiro fica perto de 2 GB, acima do
+limite de um site. Para dividir, gere as UFs grandes em outra pasta e publique em
+outro repositório com Pages ativo:
+
+```sh
+npm run dados -- --entrada receita --ufs SP --saida ../dados-sp
+npx gh-pages -d ../dados-sp -r https://github.com/eduardosdmts-source/consulta-cnpj-dados-sp.git
+```
+
+e aponte a UF para ele em `site.config.mjs`:
+
+```js
+dataSources: {
+  SP: 'https://eduardosdmts-source.github.io/consulta-cnpj-dados-sp/',
+},
+```
+
+O GitHub Pages responde com `Access-Control-Allow-Origin: *`, então o app lê
+de outro domínio sem configuração extra.
+
+### Converter os dados antigos de Goiás
+
+Para manter Goiás no ar antes de rodar o gerador, converta os arquivos que já
+estão no `gh-pages`:
+
+```sh
+git worktree add ../gh-pages gh-pages
+npm run dados:converter-go -- --origem ../gh-pages/restrito/data
+```
+
+## Desenvolvimento
+
+```sh
+npm install
+npm run dev
+npm run deploy   # build + publica no gh-pages
+```

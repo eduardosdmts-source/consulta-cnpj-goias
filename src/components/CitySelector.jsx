@@ -8,7 +8,7 @@ function normalize(text) {
     .replace(/[̀-ͯ]/g, '')
 }
 
-export default function CitySelector({ cityList, selected, onChange }) {
+export default function CitySelector({ cityList, selected, onChange, ufNome }) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
 
@@ -56,7 +56,7 @@ export default function CitySelector({ cityList, selected, onChange }) {
           }}
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
-          placeholder="Filtrar por cidade em Goiás (opcional)"
+          placeholder={ufNome ? `Filtrar por cidade em ${ufNome} (opcional)` : 'Filtrar por cidade (opcional)'}
           className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 transition"
         />
 
