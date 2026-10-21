@@ -5,11 +5,15 @@ import EmptyState from './components/EmptyState'
 import ErrorMessage from './components/ErrorMessage'
 import SkeletonTable from './components/SkeletonTable'
 import ResultsTable from './components/ResultsTable'
+import UfSelector from './components/UfSelector'
+import { loadCnae, loadUfIndex, NotPublishedError } from './lib/dataset'
+import { UFS } from './lib/ufs'
 import siteConfig from '../site.config.mjs'
 
-const DATA_BASE = `${import.meta.env.BASE_URL}data`
+const ufNome = (sigla) => UFS.find((uf) => uf.sigla === sigla)?.nome || sigla
 
 function App() {
+  const [uf, setUf] = useState(null)
   const [cnaeList, setCnaeList] = useState([])
   const [cnaeListError, setCnaeListError] = useState(null)
   const [cityList, setCityList] = useState([])
@@ -20,24 +24,39 @@ function App() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch(`${DATA_BASE}/cnaes-go.json`)
-      .then((response) => {
-        if (!response.ok) throw new Error('status ' + response.status)
-        return response.json()
-      })
-      .then(setCnaeList)
-      .catch(() => setCnaeListError('Não foi possível carregar a lista de CNAEs. Atualize a página.'))
+    setCnaeList([])
+    setCityList([])
+    setCityFilter(null)
+    setCnaeListError(null)
+    setResults(null)
+    setError(null)
+    if (!uf) return
 
-    fetch(`${DATA_BASE}/municipios-go.json`)
-      .then((response) => {
-        if (!response.ok) throw new Error('status ' + response.status)
-        return response.json()
+    let ignore = false
+    loadUfIndex(uf)
+      .then(({ cnaes, municipios }) => {
+        if (ignore) return
+        setCnaeList(cnaes)
+        setCityList(municipios)
       })
-      .then(setCityList)
-      .catch(() => {})
-  }, [])
+      .catch((loadError) => {
+        if (ignore) return
+        setCnaeListError(
+          loadError instanceof NotPublishedError
+            ? `Os dados de ${ufNome(uf)} ainda não foram publicados.`
+            : 'Não foi possível carregar a lista de CNAEs. Atualize a página.'
+        )
+      })
+    return () => {
+      ignore = true
+    }
+  }, [uf])
 
   async function handleSearch() {
+    if (!uf) {
+      setError('Escolha o estado (UF) para buscar.')
+      return
+    }
     if (selected.length === 0) {
       setError('Escolha ao menos um CNAE para buscar.')
       return
@@ -47,14 +66,7 @@ function App() {
     setError(null)
 
     try {
-      const responses = await Promise.all(
-        selected.map((item) =>
-          fetch(`${DATA_BASE}/cnae/${item.codigo}.json`).then((response) => {
-            if (!response.ok) throw new Error('status ' + response.status)
-            return response.json()
-          })
-        )
-      )
+      const responses = await Promise.all(selected.map((item) => loadCnae(uf, item.codigo, cityList)))
 
       const merged = new Map()
       for (const list of responses) {
@@ -87,8 +99,14 @@ function App() {
         </header>
 
         <div className="flex flex-col gap-3">
+          <UfSelector selected={uf} onChange={setUf} />
           <CnaeSelector cnaeList={cnaeList} selected={selected} onChange={setSelected} />
-          <CitySelector cityList={cityList} selected={cityFilter} onChange={setCityFilter} />
+          <CitySelector
+            cityList={cityList}
+            selected={cityFilter}
+            onChange={setCityFilter}
+            ufNome={uf ? ufNome(uf) : null}
+          />
 
           <div className="flex justify-center">
             <button
@@ -109,7 +127,7 @@ function App() {
 
         {!loading && results === null && <EmptyState />}
 
-        {!loading && results !== null && <ResultsTable results={results} />}
+        {!loading && results !== null && <ResultsTable results={results} uf={uf} />}
       </div>
     </div>
   )

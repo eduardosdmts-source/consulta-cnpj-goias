@@ -12,9 +12,11 @@ dist
 dist-ssr
 *.local
 
-# Dataset gerado a partir da base pública da Receita Federal (~1.3GB).
+# Dataset gerado a partir da base pública da Receita Federal (scripts/gerar-dados.mjs).
 # Não versionado no git; é publicado direto no branch gh-pages pelo deploy.
-public/data/cnae/
+public/data/
+# Arquivos baixados da Receita para gerar o dataset.
+receita/
 
 # Editor directories and files
 .vscode/*

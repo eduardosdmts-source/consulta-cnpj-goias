@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "npm run build && node scripts/build-root-redirect.mjs && gh-pages -d dist --add"
+    "deploy": "npm run build && node scripts/build-root-redirect.mjs && gh-pages -d dist --add",
+    "dados": "node --max-old-space-size=8192 scripts/gerar-dados.mjs",
+    "dados:converter-go": "node scripts/converter-legado-go.mjs"
   },
   "dependencies": {
     "react": "^19.2.7",
@@ -22,6 +24,7 @@
     "gh-pages": "^6.3.0",
     "oxlint": "^1.71.0",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.1.1"
+    "vite": "^8.1.1",
+    "yauzl": "^3.4.0"
   }
 }
