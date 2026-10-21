@@ -11,7 +11,7 @@ export default {
   outDir: 'dist/restrito',
 
   // Gerada com: node -e "console.log(require('crypto').createHash('sha256').update('SENHA').digest('hex'))"
-  passwordHash: 'b606615351502ed496863d987340e31fab70b0813d982162dcd8c997d7a83b65',
+  passwordHash: '441b18950c63bfea4d2a49b42d054b46d5f24b6591d6d1ecd23819aab7b6d1f9',
   storageKey: 'consulta-cnpj-goias-restrito-auth',
 
   // De onde vêm os dados de cada UF. UF fora desta lista é lida do próprio
